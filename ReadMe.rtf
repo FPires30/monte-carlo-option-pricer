@@ -1,0 +1,210 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2865
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica-Bold;\f1\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww34360\viewh21680\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\b\fs48 \cf0 Monte Carlo Option Pricer with Black-Scholes & the Greeks -
+\f1\b0\fs28 \
+\
+A Python-based European option pricing engine that combines Monte Carlo simulation with the closed-form Black-Scholes model.\
+Prices call and put options via 10000 simulated stock price trajectories using Geometric Brownian Motion, computes all of the option Greeks both analytically and numerically \
+and performs sensitivity analysis across key market parameters.\
+\
+Built using stochastic calculus, risk-neutral pricing, the Black-Scholes framework, and finite difference methods.\
+\
+\
+\
+
+\f0\b\fs36 What It Does -
+\f1\b0\fs28 \
+\
+- 
+\f0\b Prices European call and put options
+\f1\b0  using Monte Carlo simulation with 100,00+ paths, achieving pricing accuracy within 1% of theoretical values\
+- 
+\f0\b Computes all five Greeks
+\f1\b0  (Delta, Gamma, Theta, Vega, Rho) via two  methods -\
+- Derived closed-form Black-Scholes derivatives\
+- Calculated \'93bump and revalue\'94 applied to Monte Carlo result\
+- 
+\f0\b Simulates stock price
+\f1\b0  paths via Geometric Brownian Motion using It\'f4 SDE \
+- 
+\f0\b Runs sensitivity analysis
+\f1\b0  across volatility, strike price, and risk-free rate for both calls and puts\
+\
+
+\f0\b \
+\
+
+\fs36 Option Pricing Results -
+\f1\b0\fs28 \
+\
+\
+  Stock Price (S0): $100.00\
+  Strike Price (K): $105.00\
+  Time to Expiry (T): 1 year\
+  Risk-Free Rate (r): 5.00%\
+  Volatility: 20%\
+  Simulations:  10000\
+\
+  CALL OPTION:\
+    Monte Carlo Price: $7.9683\
+    Black-Scholes Price:  $8.0214\
+    Pricing Error: 0.66%\
+\
+  PUT OPTION:\
+    Monte Carlo Price: $7.8769  \
+    Black-Scholes Price: $7.9004\
+    Pricing Error: 0.30%\
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+\cf0 \
+
+\f0\b\fs36 Greeks -
+\f1\b0\fs28 \
+\
+\
+  CALL GREEKS -\
+    Greek   | Derived (BS) | Calculated (MC) |  Difference\
+    ----------------------------------------------------\
+    Delta    |     0.542228 |       0.541460 |     0.000768\
+    Gamma |     0.019835 |       0.019905 |     0.000070\
+    Theta    |    -0.017198 |      -0.017115 |     0.000083\
+    Vega     |     0.396705 |       0.393551 |     0.003154\
+    Rho      |     0.462015 |       0.461831 |     0.000184\
+\
+\
+\
+
+\f0\b\fs36 Theory & Methodology
+\f1\b0\fs28 \
+\
+
+\f0\b Geometric Brownian Motion -
+\f1\b0 \
+\
+Stock prices are modelled by the stochastic differential equation:\
+\
+\
+dS = \uc0\u956  \'b7 S \'b7 dt + \u963  \'b7 S \'b7 dW\
+\
+\
+where dW is a Wiener process. Under the risk-neutral measure, the drift \uc0\u956  is replaced by the risk-free rate r. The exact solution (via It\'f4's lemma) gives:\
+\
+\
+S(t+\uc0\u916 t) = S(t) \'b7 exp[(r \u8722  \u963 \'b2/2) \'b7 \u916 t + \u963  \'b7 \u8730 \u916 t \'b7 Z],  Z ~ N(0,1)\
+\
+\
+The \uc0\u8722 \u963 \'b2/2 term is the It\'f4 correction, which adjusts for the convexity of the exponential function applied to a random variable.\
+\
+
+\f0\b Monte Carlo Pricing -
+\f1\b0 \
+\
+- Simulate an independent stock price paths to expiry\
+- Compute the payoff for each path  - max(S_T \uc0\u8722  K, 0) for calls, max(K \u8722  S_T, 0) for puts\
+- Average the payoffs and discount to present value: Price = e^(\uc0\u8722 rT) \'b7 mean(payoffs)\
+\
+By the Law of Large Numbers, this converges to the true price.\
+\
+
+\f0\b Black-Scholes Formula -
+\f1\b0 \
+\
+Used as the derived benchmark:\
+\
+\
+d\uc0\u8321  = [ln(S/K) + (r + \u963 \'b2/2) \'b7 T] / (\u963  \'b7 \u8730 T)\
+d\uc0\u8322  = d\u8321  \u8722  \u963  \'b7 \u8730 T\
+\
+Call = S \'b7 N(d\uc0\u8321 ) \u8722  K \'b7 e^(\u8722 rT) \'b7 N(d\u8322 )\
+Put  = K \'b7 e^(\uc0\u8722 rT) \'b7 N(\u8722 d\u8322 ) \u8722  S \'b7 N(\u8722 d\u8321 )\
+\
+\
+
+\f0\b The Greeks -
+\f1\b0 \
+\
+The Greeks are partial derivatives of the option price with respect to each input parameter. They quantify how sensitive the option is to changes in market conditions and are essential for hedging and risk management.\
+\
+| Greek | Definition | Formula (Call) | Interpretation |\
+\
+|  Delta  | \uc0\u8706 V/\u8706 S | N(d\u8321 ) | Price change per $1 stock move. Also approximates probability of expiring ITM. |\
+|  Gamma  | \uc0\u8706 \'b2V/\u8706 S\'b2 | n(d\u8321 ) / (S\'b7\u963 \'b7\u8730 T) | Rate of change of Delta. Peaks ATM near expiry. Same for calls and puts. |\
+|  Theta  |  \uc0\u8706 V/\u8706 t | \u8722 [S\'b7n(d\u8321 )\'b7\u963  / (2\u8730 T)] \u8722  rKe^(\u8722 rT)N(d\u8322 ) | Daily time decay. Almost always negative \'97 options are wasting assets. |\
+|  Vega  |  \uc0\u8706 V/\u8706 \u963  | S \'b7 n(d\u8321 ) \'b7 \u8730 T | Price change per 1% volatility move. Same for calls and puts. |\
+|  Rho  |  \uc0\u8706 V/\u8706 r | K\'b7T\'b7e^(\u8722 rT)\'b7N(d\u8322 ) | Price change per 1% rate move. Positive for calls, negative for puts. |\
+\
+Where N(x) is the standard normal CDF and n(x) is the standard normal PDF.\
+\
+The calculated Greeks are gotten via the finite difference "bump-and-revalue" method, which works for any pricing model including exotics:\
+\
+\
+\uc0\u8706 V/\u8706 x \u8776  [V(x + h) \u8722  V(x \u8722  h)] / (2h)        (central difference)\
+\uc0\u8706 \'b2V/\u8706 x\'b2 \u8776  [V(x+h) \u8722  2V(x) + V(x\u8722 h)] / h\'b2   (second derivative)\
+\
+\
+
+\f0\b \
+
+\fs36 Project Structure -
+\f1\b0\fs28 \
+\
+\
+- monte_carlo_option_pricer.py    # Main code\
+- simulated_paths.png                 # GBM paths \
+- sensitivity_analysis.png             # Parameter sensitivity grid \
+- greeks_vs_spot.png                  # All 5 Greeks vs stock price\
+- greeks_vs_time.png                  # All 5 Greeks vs time to expiry\
+- README.md                            # This\
+\
+\
+\
+\
+
+\f0\b\fs36 Libraries used -
+\f1\b0\fs28 \
+\
+Python 3.8+\
+NumPy\
+SciPy\
+Matplotlib\
+\
+\
+\
+
+\f0\b\fs36 Usage -
+\f1\b0\fs28 \
+\
+\
+To price a different option, edit the parameters in the main() function -\
+\
+\
+S0    = 150.0    # Current stock price ($)\
+K     = 145.0    # Strike price ($)\
+T     = 0.5      # Time to expiration (years)\
+r     = 0.04     # Risk-free rate\
+sigma = 0.30     # Volatility\
+\
+\
+\
+
+\f0\b \
+Key Concepts Demonstrated - 
+\f1\b0 \
+\
+\
+| Stochastic Differential Equations | GBM simulation with exact discretisation |\
+| It\'f4's Lemma & It\'f4 Correction | The \uc0\u8722 \u963 \'b2/2 drift adjustment in the exponential solution |\
+| Risk-Neutral Pricing | Using r (not \uc0\u956 ) as the drift for option valuation |\
+| The greeks (\uc0\u916 , \u915 , \u920 , \u957 , \u961 ) | Analytical closed-form + numerical finite differences |\
+| Finite Difference Methods | Bump-and-revalue for numerical greeks calculation |\
+\
+\
+
+\fs24 \
+}
